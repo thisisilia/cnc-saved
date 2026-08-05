@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -sL -o .ref/list-22272-collection-detail.png \"https://www.figma.com/api/mcp/asset/3faeae2c-3409-433c-a5ff-e936bae405f0\")",
+      "Bash(curl -sL -o .ref/list-22560-rename.png \"https://www.figma.com/api/mcp/asset/be0d46db-d6fc-4fa9-bb68-a4b2a5ef9eb9\")",
+      "Bash(grep -n \"GridCard {...listings}\" screens/SavedScreen.js)"
+    ]
+  },
+  "enabledPlugins": {
+    "expo@claude-plugins-official": true
+  }
+}
