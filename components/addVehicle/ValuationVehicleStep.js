@@ -69,6 +69,7 @@ export default function ValuationVehicleStep({
                     key={field.id}
                     label={field.label}
                     value={fields[field.id]}
+                    active={picker?.id === field.id}
                     onPress={() => setPicker(field)}
                   />
                 ) : (
@@ -101,6 +102,7 @@ export default function ValuationVehicleStep({
             <SelectField
               label="Select ownership length"
               value={ownership}
+              active={ownershipOpen}
               onPress={() => setOwnershipOpen(true)}
             />
           </View>

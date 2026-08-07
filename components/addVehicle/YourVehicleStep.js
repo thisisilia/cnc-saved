@@ -86,6 +86,7 @@ export default function YourVehicleStep({
                   key={field.id}
                   label={field.label}
                   value={fields[field.id]}
+                  active={picker?.id === field.id}
                   onPress={() => setPicker(field)}
                 />
               ) : (

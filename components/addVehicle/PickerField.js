@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import { borderWidth, color, font, radius, spacing } from '../../theme/tokens';
 import DatePickerSheet from '../DatePickerSheet';
+import { BORDER_EMPTY, borderFor } from './Field';
 
 /**
  * A date/year field styled like {@link TextField} but opening the iOS wheel
@@ -19,8 +20,13 @@ export default function PickerField({
   // to open one at the screen root instead. This is required inside a ScrollView
   // (whose overflow would otherwise clip the sheet's full-screen scrim).
   onRequestOpen,
+  // Parents that own the sheet (via onRequestOpen) can flag the open state here
+  // so the field shows its active border.
+  active = false,
 }) {
   const [open, setOpen] = useState(false);
+  const isActive = open || active;
+  const floating = isActive || !!value;
   const setOpenState = (next) => {
     setOpen(next);
     onOpenChange?.(next);
@@ -35,12 +41,12 @@ export default function PickerField({
   return (
     <>
       <Pressable
-        style={styles.field}
+        style={[styles.field, { borderColor: borderFor(isActive, !!value) }]}
         onPress={press}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? label}
       >
-        {value ? <Text style={styles.floatLabel}>{label}</Text> : null}
+        {floating ? <Text style={styles.floatLabel}>{label}</Text> : null}
         <Text style={[styles.value, !value && styles.placeholder]}>{value || label}</Text>
       </Pressable>
       {!onRequestOpen && (
@@ -63,7 +69,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
     backgroundColor: color.background.neutralWhite,
     borderWidth: borderWidth.xs,
-    borderColor: color.border.neutralSubtle,
+    borderColor: BORDER_EMPTY,
     borderRadius: radius.md,
     paddingHorizontal: spacing[3],
     paddingVertical: spacing[2],

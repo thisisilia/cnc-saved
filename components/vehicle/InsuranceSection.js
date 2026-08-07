@@ -23,7 +23,7 @@ export default function InsuranceSection({ insurance, onQuote }) {
       />
 
       <View style={styles.text}>
-        <Text style={styles.eligible} numberOfLines={1} adjustsFontSizeToFit>
+        <Text style={styles.eligible}>
           {insurance.eligibleLabel}
         </Text>
         <View style={styles.priceRow}>
@@ -70,9 +70,8 @@ const styles = StyleSheet.create({
     ...font.bodySmRegular,
     fontFamily: fontFamily.brandSemibold,
     fontWeight: 'normal',
-    // Sized to fit the full label on one line beside the 48px logo + info icon.
-    fontSize: 13,
-    lineHeight: 18,
+    fontSize: 14,
+    lineHeight: 20,
     color: color.text.neutralBold,
   },
   priceRow: {

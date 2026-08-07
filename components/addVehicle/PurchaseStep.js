@@ -5,7 +5,7 @@ import { CURRENCIES, PURCHASE_SOURCES } from '../../data/addVehicle';
 import { borderWidth, color, font, radius, spacing } from '../../theme/tokens';
 import ContinueButton from './ContinueButton';
 import DatePickerSheet from '../DatePickerSheet';
-import { SelectField } from './Field';
+import { SelectField, borderFor } from './Field';
 import FlowHeader from './FlowHeader';
 import OptionSheet from './OptionSheet';
 
@@ -17,7 +17,7 @@ export default function PurchaseStep({ purchase, onChange, onBack, onContinue, o
   const [picker, setPicker] = useState(null);
   const [yearPickerOpen, setYearPickerOpen] = useState(false);
   const [priceFocused, setPriceFocused] = useState(false);
-  const floatPrice = priceFocused;
+  const floatPrice = priceFocused || !!purchase.price;
   const openYearPicker = (next) => {
     setYearPickerOpen(next);
     onPickerOpenChange?.(next);
@@ -33,7 +33,7 @@ export default function PurchaseStep({ purchase, onChange, onBack, onContinue, o
 
       <View style={styles.body}>
         <Pressable
-          style={styles.field}
+          style={[styles.field, { borderColor: borderFor(yearPickerOpen, !!purchase.year) }]}
           onPress={() => openYearPicker(true)}
           accessibilityRole="button"
           accessibilityLabel="Purchase year"
@@ -44,7 +44,7 @@ export default function PurchaseStep({ purchase, onChange, onBack, onContinue, o
           </Text>
         </Pressable>
 
-        <View style={styles.field}>
+        <View style={[styles.field, { borderColor: borderFor(priceFocused, !!purchase.price) }]}>
           {floatPrice ? <Text style={styles.floatLabel}>Purchase price</Text> : null}
           <View style={styles.priceRow}>
             <TextInput
@@ -70,7 +70,12 @@ export default function PurchaseStep({ purchase, onChange, onBack, onContinue, o
           </View>
         </View>
 
-        <SelectField label="Purchased from" value={purchase.source} onPress={() => setPicker('source')} />
+        <SelectField
+          label="Purchased from"
+          value={purchase.source}
+          active={picker === 'source'}
+          onPress={() => setPicker('source')}
+        />
       </View>
 
       <View style={styles.footer}>
