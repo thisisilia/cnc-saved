@@ -69,6 +69,16 @@ export function formatCurrency(value) {
   return `£${Math.round(value).toLocaleString('en-GB')}`;
 }
 
+/**
+ * Present the valuation as a range across the condition scale — the lowest
+ * grade (Fair) to the highest (Concours), e.g. "£17,700 – £23,200". Grades are
+ * ordered low→high; falls back to `value` if none are supplied.
+ */
+export function gradeRange(grades, value) {
+  if (!grades || grades.length < 2) return value ?? '';
+  return `${grades[0].price} – ${grades[grades.length - 1].price}`;
+}
+
 export function formatAxisValue(value) {
   return value === 0 ? '0' : `£${Math.round(value / 1000)}K`;
 }

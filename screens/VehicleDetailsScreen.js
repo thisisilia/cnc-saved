@@ -26,6 +26,7 @@ import ShareSheet from '../components/vehicle/ShareSheet';
 import WelcomeCarAlert from '../components/vehicle/WelcomeCarAlert';
 import VehicleHero, { HERO_HEIGHT } from '../components/vehicle/VehicleHero';
 import { buildMileage, getVehicleDetails } from '../data/vehicleDetails';
+import { gradeRange } from '../data/portfolio';
 import { useGarage } from '../state/garage';
 import { applyVehicleEdits, useVehicleEdits } from '../state/vehicleEdits';
 import { color, font, layout, radius, spacing } from '../theme/tokens';
@@ -292,7 +293,9 @@ export default function VehicleDetailsScreen({ navigation, route }) {
                 <CircleInfo size={20} color={color.text.neutralRegular} />
               </Pressable>
               <View style={styles.valuationValueBlock}>
-                <Text style={styles.valuationValue}>{vehicle.valuation.value}</Text>
+                <Text style={styles.valuationValue}>
+                  {gradeRange(vehicle.valuation.grades, vehicle.valuation.value)}
+                </Text>
                 <Text style={styles.valuationUpdated}>{vehicle.valuation.updated}</Text>
               </View>
               <View style={styles.conditionBlock}>

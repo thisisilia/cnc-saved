@@ -1,9 +1,10 @@
-# CNC — Sell your car · v1.6.0
+# CNC — Sell your car · v1.6.1
 
-First-run onboarding for an empty garage, a valuation-history timeline, a
-redesigned insurance eligibility card, a full-page performance view, and a round
-of motion polish so the bottom sheets open without a jump. Built as an Expo /
-React Native app; this release ships the web build.
+First-run onboarding for an empty garage (now swipeable), a valuation-history
+timeline, a redesigned insurance eligibility card, a full-page performance view,
+and a round of interaction polish — drag-to-close sheets, scrollable steps, and
+sheet opens without a jump. Built as an Expo / React Native app; this release
+ships the web build.
 
 ## What's new in v1.6
 
@@ -12,6 +13,9 @@ React Native app; this release ships the web build.
   screens (*Your garage is here!*, *Know your vehicle's value*, *Never miss an
   important update*) that slide horizontally with a live page indicator. Titles
   are set in Roboto Flex.
+- **Swipe between screens** — the carousel also takes manual navigation: swipe
+  left/right on touch, click-drag with a mouse, or a **two-finger trackpad**
+  swipe on the web; the auto-advance restarts after you interact.
 - **Add-vehicle coachmark** — after **Get started**, a spotlight highlights the
   "Add vehicle to your garage" card and a pointer tooltip appears:
   **Start adding your vehicle** opens the Add Vehicle flow, **Skip** dismisses it
@@ -21,17 +25,27 @@ React Native app; this release ships the web build.
 - **Valuation card refresh** — an ⓘ (circle-info) icon beside the title, the
   value over a "Latest valuation" line, an inline condition scale, and a
   **Sell this car** / **Get expert valuation** button pair. The valuation page
-  mirrors it, with **Get expert valuation** as the primary action.
-- **Valuation history** — the info icon opens a timeline of monthly readings on
-  the 15th, January–July 2026, with condition easing from Excellent to Good.
-- **Market trend tooltip** now reports the market **Average** at the tapped point.
+  uses the same card, with **Get expert valuation** as its primary button.
+- **Valuation shown as a range** — the figure now reads across the condition
+  scale, from **Fair to Concours** (e.g. "£17,700 – £23,200"), on both the vehicle
+  card and the valuation page.
+- **Valuation history** — the info icon (on both the vehicle valuation card and
+  the valuation page) opens a timeline of monthly readings on the 15th,
+  January–July 2026, with condition easing from Excellent to Good.
+- **Market-trend tooltip** — on the vehicle page it shows the market **Average**,
+  the **Bought** baseline and the change; the valuation page shows the average
+  only.
 
 ### Performance
 - **Overall performance** (renamed from "My Vehicles", now 16px) is a **full
   page** rather than a sheet, with a "vs past …" comparison that follows the
-  selected range. The summary card reads "↗ 5% vs last month" to match the Saved
-  page, and its value delta is bold.
+  selected range. The summary card reads "↗ 5% + £14,000 vs last month" to match
+  the Saved page, both figures bold.
 - The saved-search **price trend** opens as a page too.
+
+### Notifications
+- The reminder actions (**Renew Now**, **Update Mileage**, …) are now filled
+  **primary green** buttons instead of green outlines.
 
 ### Insurance
 - **Eligibility card** — "Eligible for Car & Classic Insurance from £200
@@ -53,6 +67,10 @@ React Native app; this release ships the web build.
   bottom; steps slide left/right like a native navigation flow; and they open
   **without a jump** — the sheet is measured before it slides and the
   registration field focuses only once the sheet is open.
+- **Gestures & fit** — sheets can be **dragged down to close** from the handle;
+  long steps like **Vehicle condition** now scroll with the button pinned; the
+  **Update mileage** sheet fills to a fixed height; and the bottom padding was
+  trimmed so content isn't clipped on short screens.
 - **Typography** — Proxima Nova (Regular / Bold / Semibold) is wired up on web
   and used for the SOLD badge and the insurance heading; ALL-CAPS labels were
   removed everywhere except the SOLD badge.
@@ -81,9 +99,9 @@ React Native app; this release ships the web build.
 - **Market trend from the real value** — average price, chart axis and high/low
   sales are derived from each vehicle's own valuation, so added cars no longer
   inherit a default profile's figures.
-- **Valuation section redesign** — the condition grade scale shows inline with a
-  grade pill; the chevron opens a **valuation history** timeline (one reading on
-  the 15th of each month, January–July, the two most recent dropping to "Good").
+- **Valuation section redesign** — an inline condition grade scale and a
+  **valuation history** timeline of monthly readings. *(Restyled in v1.6 — the
+  info icon opens the history; see above.)*
 - **Consistent pricing** — the details valuation matches the price on the Saved
   page.
 - **Welcome prompt** now overlays the vehicle's own page and uses the Car &

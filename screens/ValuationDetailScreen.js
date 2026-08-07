@@ -14,6 +14,7 @@ import CircleInfo from '../components/icons/CircleInfo';
 import ValuationSheet from '../components/vehicle/ValuationSheet';
 import { buildVehicleCard, draftFromValuation } from '../data/addedVehicle';
 import { buildEstimate, getValuationDetail } from '../data/valuations';
+import { gradeRange } from '../data/portfolio';
 import { useGarage } from '../state/garage';
 import { color, font, radius, spacing } from '../theme/tokens';
 
@@ -119,7 +120,7 @@ export default function ValuationDetailScreen({ navigation, route }) {
             </Pressable>
 
             <View style={styles.estimateValueBlock}>
-              <Text style={styles.value}>{valuation.value}</Text>
+              <Text style={styles.value}>{gradeRange(valuation.grades, valuation.value)}</Text>
               <Text style={[styles.estimateExpires, expired && styles.estimateExpired]}>
                 {valuation.expires}
               </Text>
