@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Fragment, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, Text, TextInput, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SelectField, TextField } from '../components/addVehicle/Field';
+import { SelectField, TextField, borderFor } from '../components/addVehicle/Field';
 import PickerField from '../components/addVehicle/PickerField';
 import DatePickerSheet from '../components/DatePickerSheet';
 import MileageBlock from '../components/addVehicle/MileageBlock';
@@ -81,6 +81,7 @@ export default function EditVehicleScreen({ navigation, route }) {
   const [currency, setCurrency] = useState(seededPurchase?.currency ?? 'GBP');
   const [source, setSource] = useState(seededPurchase?.rows?.find((r) => r.id === 'source')?.value ?? '');
   const [priceFocused, setPriceFocused] = useState(false);
+  const floatPrice = priceFocused || !!purchasePrice;
 
   const [picker, setPicker] = useState(null);
   // The date/year wheel opens at the screen root (not inside the ScrollView, whose
@@ -219,8 +220,13 @@ export default function EditVehicleScreen({ navigation, route }) {
                 onRequestOpen={setDatePicker}
               />
               {/* Amount and currency share one field, as in the add flow. */}
-              <View style={styles.priceField}>
-                {priceFocused ? <Text style={styles.priceFloatLabel}>Purchase price</Text> : null}
+              <View
+                style={[
+                  styles.priceField,
+                  { borderColor: borderFor(priceFocused, !!purchasePrice) },
+                ]}
+              >
+                {floatPrice ? <Text style={styles.priceFloatLabel}>Purchase price</Text> : null}
                 <View style={styles.priceRow}>
                   <TextInput
                     style={styles.priceInput}
@@ -228,7 +234,7 @@ export default function EditVehicleScreen({ navigation, route }) {
                     onChangeText={(text) => setPurchasePrice(text.replace(/[^0-9]/g, ''))}
                     onFocus={() => setPriceFocused(true)}
                     onBlur={() => setPriceFocused(false)}
-                    placeholder={priceFocused ? '' : 'Purchase price'}
+                    placeholder={floatPrice ? '' : 'Purchase price'}
                     placeholderTextColor={color.text.neutralRegular}
                     keyboardType="number-pad"
                     accessibilityLabel="Purchase price"
