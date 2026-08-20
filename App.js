@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './navigation/RootNavigator';
+import { UserLenzBridge } from './components/UserLenzBridge';
 import './theme/loadBrandFont';
 import { AddVehicleDraftProvider } from './state/addVehicleDraft';
 import { AdvertDraftProvider } from './state/advertDraft';
@@ -13,6 +14,7 @@ import { color, layout } from './theme/tokens';
 export default function App() {
   return (
     <SafeAreaProvider>
+      <UserLenzBridge />
       <StatusBar style="dark" />
       {/* On web the app would otherwise stretch to the browser width, so it is
           pinned to the comp's frame width and centred. A no-op on device. */}
