@@ -62,7 +62,7 @@ export const color = {
  * the web build so it reads as a phone rather than stretching to the browser.
  */
 export const layout = {
-  frameWidth: 393,
+  frameWidth: 350,
   /**
    * Page header padding, per the Figma headers. Every page header should use
    * these rather than raw values, so new pages stay consistent.
