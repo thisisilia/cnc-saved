@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './navigation/RootNavigator';
@@ -23,6 +23,36 @@ const DESKTOP_BREAKPOINT = 600;
 
 const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
 
+// The width the app actually has to fill. On web we measure the document element
+// directly (and track resizes) rather than trusting useWindowDimensions, which
+// can report a stale/wrong value inside an iframe — so the phone frame sizes to
+// the real embed container. On native we use the window dimensions.
+function useAvailableWidth() {
+  const windowWidth = useWindowDimensions().width;
+  const hasDOM = typeof document !== 'undefined';
+  const [domWidth, setDomWidth] = useState(
+    hasDOM ? document.documentElement.clientWidth : windowWidth
+  );
+
+  useEffect(() => {
+    if (!hasDOM) return undefined;
+    const read = () => setDomWidth(document.documentElement.clientWidth);
+    read();
+    window.addEventListener('resize', read);
+    let observer;
+    if (typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver(read);
+      observer.observe(document.documentElement);
+    }
+    return () => {
+      window.removeEventListener('resize', read);
+      if (observer) observer.disconnect();
+    };
+  }, [hasDOM]);
+
+  return hasDOM ? domWidth : windowWidth;
+}
+
 // One CSS rule drives the responsive scale on web. Every screen and sheet lives
 // inside #app-frame (sheets are in-frame overlays, never body portals), so
 // `zoom` cascades to all of it — text and icons included — with no per-component
@@ -31,7 +61,7 @@ const FRAME_SCALE_CSS =
   '#app-frame{zoom:var(--app-zoom,1);height:calc(100dvh / var(--app-zoom,1))!important;}';
 
 export default function App() {
-  const { width } = useWindowDimensions();
+  const width = useAvailableWidth();
   const isWeb = Platform.OS === 'web';
   const isDesktop = isWeb && width > DESKTOP_BREAKPOINT;
 
