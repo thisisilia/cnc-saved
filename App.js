@@ -21,8 +21,6 @@ const DESIGN_WIDTH = 393;
 // browser, where the frame is capped to a phone-width column and centred.
 const DESKTOP_BREAKPOINT = 600;
 
-const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
-
 // The width the app actually has to fill. On web we measure the document element
 // directly (and track resizes) rather than trusting useWindowDimensions, which
 // can report a stale/wrong value inside an iframe — so the phone frame sizes to
@@ -69,7 +67,10 @@ export default function App() {
   // phone column on desktop. The frame itself is DESIGN_WIDTH px and `zoom`
   // scales it to this target, so text/icons/spacing all scale together.
   const targetWidth = isDesktop ? layout.frameWidth : width;
-  const zoom = isWeb ? clamp(targetWidth / DESIGN_WIDTH, 0.8, 1.3) : 1;
+  // Scale the DESIGN_WIDTH frame down to any narrower container (no lower floor,
+  // so it never renders wider than its container and clips the gutter), and cap
+  // how far it scales *up* on wide screens.
+  const zoom = isWeb ? Math.min(targetWidth / DESIGN_WIDTH, 1.3) : 1;
 
   useEffect(() => {
     if (!isWeb || typeof document === 'undefined') return;
