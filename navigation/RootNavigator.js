@@ -33,6 +33,58 @@ import VehicleDetailsScreen from '../screens/VehicleDetailsScreen';
 const Stack = createNativeStackNavigator();
 
 /**
+ * URL routing for the web build: every screen gets its own path (e.g.
+ * /my-garage, /vehicle/:id) so pages are linkable, bookmarkable and show in the
+ * address bar. Extra params (section, title, single, …) ride along as query
+ * strings automatically.
+ */
+const linking = {
+  prefixes:
+    Platform.OS === 'web' && typeof window !== 'undefined' ? [window.location.origin] : ['cnc://'],
+  config: {
+    screens: {
+      Saved: '',
+      MyGarage: 'my-garage',
+      Performance: 'performance',
+      PreviouslyOwned: 'previously-owned',
+      VehicleDetails: 'vehicle/:id',
+      EditVehicle: 'vehicle/:id/edit',
+      EditDetails: 'vehicle/:id/edit-details',
+      Listings: 'listings',
+      Collection: 'collection/:id',
+      Searches: 'searches',
+      SearchCollection: 'search/:id',
+      Valuations: 'valuations',
+      ValuationDetail: 'valuation/:id',
+      ValuationEstimate: 'valuation-estimate',
+      AddVehicle: 'add-vehicle',
+      PurchaseInformation: 'purchase-information',
+      History: 'history',
+      PhotosVideo: 'photos-video',
+      Photographs: 'photographs',
+      WalkaroundVideo: 'walkaround-video',
+      ReviewDetails: 'review-details',
+      CreateAdvert: 'create-advert',
+      Description: 'description',
+      Price: 'price',
+      ReviewAdvert: 'review-advert',
+      AdvertPackage: 'advert-package',
+      AdvertSuccess: 'advert-success',
+    },
+  },
+};
+
+const documentTitle = {
+  formatter: (options, route) => {
+    const name = options?.title ?? route?.name;
+    if (!name || name === 'Saved') return 'CNC — Sell your car';
+    // "MyGarage" → "My Garage", "VehicleDetails" → "Vehicle Details".
+    const pretty = name.replace(/([a-z])([A-Z])/g, '$1 $2');
+    return `${pretty} · CNC`;
+  },
+};
+
+/**
  * Screens draw their own headers, so the stack's native header stays off.
  * `slide_from_right` gives the iOS-style horizontal push — screens slide in from
  * the right and slide back out on pop. (react-native-web does not animate stack
@@ -41,7 +93,7 @@ const Stack = createNativeStackNavigator();
  */
 export default function RootNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking} documentTitle={documentTitle}>
       <Stack.Navigator
         screenLayout={({ children }) => <SlideScreen>{children}</SlideScreen>}
         screenOptions={{
