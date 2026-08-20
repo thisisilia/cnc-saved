@@ -107,7 +107,7 @@ const linking = {
 const documentTitle = {
   formatter: (options, route) => {
     const name = options?.title ?? route?.name;
-    if (!name || name === 'Saved') return 'CNC — Sell your car';
+    if (!name || name === 'Saved') return 'CNC — Saved';
     // "MyGarage" → "My Garage", "VehicleDetails" → "Vehicle Details".
     const pretty = name.replace(/([a-z])([A-Z])/g, '$1 $2');
     return `${pretty} · CNC`;
