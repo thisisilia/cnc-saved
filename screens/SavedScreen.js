@@ -1,5 +1,5 @@
 import { Feather } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddVehicleSheet from '../components/AddVehicleSheet';
@@ -19,7 +19,7 @@ import { useAddVehicleDraft } from '../state/addVehicleDraft';
 import { useGarage } from '../state/garage';
 import { color, font, layout, radius, size, spacing } from '../theme/tokens';
 
-export default function SavedScreen({ navigation }) {
+export default function SavedScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState('saved');
   // Preview switcher for the three Saved-card states.
@@ -51,8 +51,21 @@ export default function SavedScreen({ navigation }) {
   // user owns joins the garage and opens its detail page to finish (like the
   // add-vehicle flow); one they don't own goes straight to its valuation detail,
   // skipping the estimate preview.
+  // Reflect the add-vehicle / add-valuation flow (and its live step) in the URL,
+  // so /add-vehicle/:step and /add-valuation/:step are real, shareable paths.
+  // Stable so the flows' onStepChange effect only fires on real step changes
+  // (an inline handler would re-fire every render and thrash setParams).
+  const setFlowUrl = useCallback(
+    (flow, step) =>
+      navigation.setParams({ addFlow: flow ?? undefined, addStep: step ?? undefined }),
+    [navigation]
+  );
+  const onVehicleStep = useCallback((step) => setFlowUrl('vehicle', step), [setFlowUrl]);
+  const onValuationStep = useCallback((step) => setFlowUrl('valuation', step), [setFlowUrl]);
+
   const completeValuation = (result) => {
     setAddValuationOpen(false);
+    setFlowUrl();
     if (result.ownership === NOT_OWNED) {
       setEnteredValuation(true);
       navigation.navigate('ValuationDetail', { title: result.vehicle?.title, result });
@@ -78,14 +91,27 @@ export default function SavedScreen({ navigation }) {
   const openAddVehicle = (fromResume) => {
     setResuming(fromResume);
     setAddVehicleOpen(true);
+    setFlowUrl('vehicle', 'registration');
   };
+  const openAddValuation = () => {
+    setAddValuationOpen(true);
+    setFlowUrl('valuation', 'registration');
+  };
+
+  // Deep link: landing on /add-vehicle/… or /add-valuation/… opens that flow.
+  const addFlowParam = route.params?.addFlow;
+  useEffect(() => {
+    if (addFlowParam === 'vehicle' && !addVehicleOpen) openAddVehicle(false);
+    else if (addFlowParam === 'valuation' && !addValuationOpen) openAddValuation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addFlowParam]);
 
   // The Saved page keeps the chooser — a vehicle, a valuation or a search.
   // Garage and valuation have flows; search is still to build.
   const handleSelectOption = (key) => {
     setAddSheetOpen(false);
     if (key === 'garage') openAddVehicle(false);
-    else if (key === 'valuation') setAddValuationOpen(true);
+    else if (key === 'valuation') openAddValuation();
   };
 
   return (
@@ -231,15 +257,18 @@ export default function SavedScreen({ navigation }) {
       <AddVehicleFlow
         visible={addVehicleOpen}
         resumeDraft={resuming ? draft : null}
+        onStepChange={onVehicleStep}
         onClose={(partial) => {
           setAddVehicleOpen(false);
           setResuming(false);
+          setFlowUrl();
           // Dropped off partway: keep the progress so it can be resumed.
           if (partial) startDraft(partial);
         }}
         onComplete={(completed) => {
           setAddVehicleOpen(false);
           setResuming(false);
+          setFlowUrl();
           reset();
           setEnteredGarage(true);
           // Open the car's detail page; the welcome prompt shows over it there.
@@ -251,7 +280,11 @@ export default function SavedScreen({ navigation }) {
 
       <AddValuationFlow
         visible={addValuationOpen}
-        onClose={() => setAddValuationOpen(false)}
+        onStepChange={onValuationStep}
+        onClose={() => {
+          setAddValuationOpen(false);
+          setFlowUrl();
+        }}
         onComplete={completeValuation}
       />
     </View>

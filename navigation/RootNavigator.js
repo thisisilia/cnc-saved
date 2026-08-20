@@ -1,4 +1,8 @@
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  getPathFromState as defaultGetPathFromState,
+  getStateFromPath as defaultGetStateFromPath,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform } from 'react-native';
 import SlideScreen from './SlideScreen';
@@ -38,9 +42,35 @@ const Stack = createNativeStackNavigator();
  * address bar. Extra params (section, title, single, …) ride along as query
  * strings automatically.
  */
+// The add-vehicle / add-valuation flows are bottom sheets hosted on the Saved
+// screen, so they aren't stack routes. We give their steps real paths
+// (/add-vehicle/:step, /add-valuation/:step) by mapping them to the Saved
+// screen with `addFlow`/`addStep` params, and delegate everything else to the
+// default path↔state logic.
+const FLOW_TO_PATH = { vehicle: 'add-vehicle', valuation: 'add-valuation' };
+const PATH_TO_FLOW = { 'add-vehicle': 'vehicle', 'add-valuation': 'valuation' };
+
 const linking = {
   prefixes:
     Platform.OS === 'web' && typeof window !== 'undefined' ? [window.location.origin] : ['cnc://'],
+  getStateFromPath: (path, options) => {
+    const segs = path.split('?')[0].replace(/^\/+|\/+$/g, '').split('/');
+    const flow = PATH_TO_FLOW[segs[0]];
+    if (flow) {
+      return {
+        routes: [{ name: 'Saved', params: { addFlow: flow, addStep: segs[1] || undefined } }],
+      };
+    }
+    return defaultGetStateFromPath(path, options);
+  },
+  getPathFromState: (state, options) => {
+    const route = state.routes?.[state.index ?? state.routes.length - 1];
+    if (route?.name === 'Saved' && FLOW_TO_PATH[route.params?.addFlow]) {
+      const base = `/${FLOW_TO_PATH[route.params.addFlow]}`;
+      return route.params.addStep ? `${base}/${route.params.addStep}` : base;
+    }
+    return defaultGetPathFromState(state, options);
+  },
   config: {
     screens: {
       Saved: '',

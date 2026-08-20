@@ -43,8 +43,12 @@ const EMPTY_FIELDS = {
  * the rest in by hand. Purchase information, condition, history and photos are
  * later steps and are not built yet — `onComplete` is where they hook on.
  */
-export default function AddVehicleFlow({ visible, onClose, onComplete, resumeDraft }) {
+export default function AddVehicleFlow({ visible, onClose, onComplete, resumeDraft, onStepChange }) {
   const [step, setStep] = useState('registration');
+  // Report the live step up so the host can reflect it in the URL.
+  useEffect(() => {
+    if (visible) onStepChange?.(step);
+  }, [visible, step, onStepChange]);
   // Direction of the last step change, so the content slides like a nav push/pop.
   const [dir, setDir] = useState(1);
   const go = (next, d = 1) => {

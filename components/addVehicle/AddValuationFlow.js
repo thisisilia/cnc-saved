@@ -23,8 +23,12 @@ const EMPTY_FIELDS = { year: '', variant: '', bodyType: '' };
  * a lighter "Your vehicle" (enough to price it) → condition. `onComplete` hands
  * back everything the estimate result page needs.
  */
-export default function AddValuationFlow({ visible, onClose, onComplete }) {
+export default function AddValuationFlow({ visible, onClose, onComplete, onStepChange }) {
   const [step, setStep] = useState('registration');
+  // Report the live step up so the host can reflect it in the URL.
+  useEffect(() => {
+    if (visible) onStepChange?.(step);
+  }, [visible, step, onStepChange]);
   const [dir, setDir] = useState(1);
   const go = (next, d = 1) => {
     setDir(d);
