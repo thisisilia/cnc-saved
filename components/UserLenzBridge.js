@@ -9,7 +9,7 @@ export function UserLenzBridge() {
     script.onload = () => {
       window.UserLenzBridge.init({
         source: "userlenz-replay-bridge",
-        allowedOrigins: ["https://userlenz-demo.web.app"],
+        allowedOrigins: ["*", "https://userlenz-demo.web.app"],
       });
     };
     document.head.appendChild(script);
