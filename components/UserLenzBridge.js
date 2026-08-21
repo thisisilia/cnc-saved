@@ -14,12 +14,12 @@ export function UserLenzBridge() {
     if (document.querySelector('script[src*="bridge.min.js"]')) return undefined;
 
     const script = document.createElement("script");
-    script.src = "https://api-6kozfrhlyq-uc.a.run.app/bridge.min.js";
+    script.src = "https://api-en72htyjgq-uc.a.run.app/bridge.min.js";
     script.defer = true;
     script.onload = () => {
       window.UserLenzBridge.init({
         source: "userlenz-replay-bridge",
-        allowedOrigins: ["https://userlenz-dev.web.app"],
+        allowedOrigins: ["https://userlenz-demo.web.app"],
       });
     };
     document.head.appendChild(script);
