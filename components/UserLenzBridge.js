@@ -19,7 +19,7 @@ export function UserLenzBridge() {
     script.onload = () => {
       window.UserLenzBridge.init({
         source: "userlenz-replay-bridge",
-        allowedOrigins: ["https://userlenz-demo.web.app"],
+        allowedOrigins: ["https://userlenz-demo.web.app", "https://cnc-inky.vercel.app"],
       });
     };
     document.head.appendChild(script);
