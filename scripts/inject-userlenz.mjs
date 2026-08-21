@@ -6,8 +6,8 @@ import { readFileSync, writeFileSync } from 'node:fs';
 
 const FILE = 'dist/index.html';
 const TAG =
-  '<script defer src="https://api-en72htyjgq-uc.a.run.app/bridge.min.js" ' +
-  "onload=\"window.UserLenzBridge&&window.UserLenzBridge.init({source:'userlenz-replay-bridge',allowedOrigins:['https://userlenz-demo.web.app']})\"></script>";
+  '<script defer src="https://api-6kozfrhlyq-uc.a.run.app/bridge.min.js" ' +
+  "onload=\"window.UserLenzBridge&&window.UserLenzBridge.init({source:'userlenz-replay-bridge',allowedOrigins:['https://userlenz-dev.web.app']})\"></script>";
 
 let html = readFileSync(FILE, 'utf8');
 
