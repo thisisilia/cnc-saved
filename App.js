@@ -4,6 +4,7 @@ import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './navigation/RootNavigator';
 import { UserLenzBridge } from './components/UserLenzBridge';
+import UserLenzDebug from './components/UserLenzDebug';
 import './theme/loadBrandFont';
 import { AddVehicleDraftProvider } from './state/addVehicleDraft';
 import { AdvertDraftProvider } from './state/advertDraft';
@@ -87,6 +88,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <UserLenzBridge />
+      <UserLenzDebug />
       <StatusBar style="dark" />
       {/* On web the app is a fixed-width phone frame scaled with `zoom` (see
           FRAME_SCALE_CSS): it fills the viewport on a phone and is a centred
