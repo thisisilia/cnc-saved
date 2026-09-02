@@ -28,8 +28,9 @@ const TABS = [
 
 const TAB_HEIGHT = 53;
 // Height to reserve under the scroll content so it clears the floating bar:
-// the pill (tab + its vertical padding) plus the container's bottom gap.
-export const TAB_BAR_HEIGHT = TAB_HEIGHT + spacing[1] * 2 + spacing[3];
+// the pill (tab + its vertical padding). The bar's bottom offset is handled by
+// the screen (safe-area / home-indicator band), so the container adds no gap.
+export const TAB_BAR_HEIGHT = TAB_HEIGHT + spacing[1] * 2;
 
 function Tab({ tab, active }) {
   const c = active ? color.text.brandPrimaryRegular : color.text.neutralBold;
@@ -92,9 +93,9 @@ export default function TabBar({ active = 'saved' }) {
 
 const styles = StyleSheet.create({
   container: {
-    // Full width minus 32 (16 each side) — the pill stretches to fill it.
+    // Full width minus 32 (16 each side) — the pill stretches to fill it. No
+    // bottom padding: the screen positions the bar above the home-indicator band.
     paddingHorizontal: spacing[4],
-    paddingBottom: spacing[3],
   },
   pill: {
     flexDirection: 'row',
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     // Glass gives translucency, not elevation — keep a soft shadow to lift it off.
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 6,
   },
@@ -120,27 +121,19 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   tab: {
+    // Equal-width cells so the five tabs fill evenly and Sell sits centred.
+    flex: 1,
     height: TAB_HEIGHT,
-    minWidth: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing[1],
-    paddingHorizontal: spacing[2],
+    gap: 4,
+    paddingVertical: 4,
   },
   tabActive: {
     // Selected tab sits on its own subtle capsule (Figma), content centred.
-    width: 85,
-    height: 53,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 4,
-    flexShrink: 0,
-    backgroundColor: color.background.neutralSubtle,
+    backgroundColor: 'hsla(120, 7%, 94%, 1)',
     borderRadius: 100,
   },
   label: {

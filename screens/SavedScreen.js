@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { useCallback, useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddVehicleSheet from '../components/AddVehicleSheet';
 import AddValuationFlow from '../components/addVehicle/AddValuationFlow';
@@ -13,6 +13,7 @@ import ResumeSetupStrip from '../components/ResumeSetupStrip';
 import SavedEmptyState from '../components/SavedEmptyState';
 import TabBar, { TAB_BAR_HEIGHT } from '../components/TabBar';
 import { STATUS_BAR_H } from '../components/StatusBarMock';
+import { HOME_INDICATOR_H } from '../components/HomeIndicator';
 import ValuationsCard from '../components/ValuationsCard';
 import { garage, listings, searches, valuations } from '../data/saved';
 import { sortVehicles } from '../data/garage';
@@ -24,6 +25,9 @@ import { color, font, layout, radius, size, spacing } from '../theme/tokens';
 
 export default function SavedScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
+  // On web, reserve the fake home-indicator band so the bar floats above it; on
+  // device the safe-area inset already covers it.
+  const bottomInset = insets.bottom + (Platform.OS === 'web' ? HOME_INDICATOR_H : 0);
   // Which of the three prototype states to show — chosen on the ViewMenu screen
   // and passed in as a route param (deep-linkable via /saved?view=…).
   const viewState = route.params?.view ?? 'multiple';
@@ -144,7 +148,7 @@ export default function SavedScreen({ navigation, route }) {
         contentContainerStyle={[
           styles.content,
           // Reserve room so content scrolls clear of the floating glass bar.
-          { paddingBottom: spacing[4] + TAB_BAR_HEIGHT + insets.bottom },
+          { paddingBottom: spacing[4] + TAB_BAR_HEIGHT + bottomInset },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -233,7 +237,7 @@ export default function SavedScreen({ navigation, route }) {
 
       {/* Floats over the scrolling content so the glass has something to
           refract — no opaque wrapper between it and the list. */}
-      <View style={[styles.tabBarWrap, { bottom: insets.bottom }]} pointerEvents="box-none">
+      <View style={[styles.tabBarWrap, { bottom: bottomInset }]} pointerEvents="box-none">
         <TabBar active="saved" />
       </View>
 
