@@ -41,3 +41,6 @@ yarn-error.*
 /android
 .vercel
 .env*
+
+# Raw source photos (staging only; app uses assets/cars)
+Image/

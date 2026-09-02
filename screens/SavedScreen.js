@@ -13,6 +13,7 @@ import ResumeSetupStrip from '../components/ResumeSetupStrip';
 import TabBar from '../components/TabBar';
 import ValuationsCard from '../components/ValuationsCard';
 import { garage, listings, searches, valuations } from '../data/saved';
+import { sortVehicles } from '../data/garage';
 import { NOT_OWNED, valuationEntries } from '../data/valuations';
 import { buildVehicleCard, draftFromValuation } from '../data/addedVehicle';
 import { useAddVehicleDraft } from '../state/addVehicleDraft';
@@ -167,7 +168,11 @@ export default function SavedScreen({ navigation, route }) {
             }
             delta={garage.delta}
             deltaCaption={garage.deltaCaption}
-            vehicles={vehicles}
+            vehicles={
+              garageVariant === 'single'
+                ? [vehicles.find((v) => v.id === 'mini') ?? vehicles[0]]
+                : sortVehicles(vehicles, 'profit')
+            }
             variant={garageVariant}
             highlighted={coachmarkOpen}
             onAdd={() => openAddVehicle(false)}

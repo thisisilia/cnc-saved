@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { color, font, radius, spacing } from '../theme/tokens';
-import AppIcon from './icons/AppIcon';
+import GainBadge from './GainBadge';
 import Sparkline from './Sparkline';
 
 /** Combined performance of every owned vehicle. Opens the Performance sheet. */
@@ -22,10 +22,7 @@ export default function PortfolioCard({ portfolio, onPress }) {
         <View style={styles.valueBlock}>
           <Text style={styles.total}>{portfolio.totalValue}</Text>
           <View style={styles.deltaRow}>
-            <AppIcon name="arrow-up-right" size={14} color={color.icon.successBold} />
-            <Text style={styles.deltaStrong}>{portfolio.delta}</Text>
-            <Text style={styles.deltaStrong}>{portfolio.deltaValue}</Text>
-            <Text style={styles.deltaCaption}>{portfolio.deltaCaption}</Text>
+            <GainBadge value={portfolio.delta} profit={portfolio.deltaValue} />
           </View>
         </View>
       </View>

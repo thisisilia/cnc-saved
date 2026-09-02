@@ -15,7 +15,7 @@ import CarInfoSection from '../components/vehicle/CarInfoSection';
 import DetailRow from '../components/vehicle/DetailRow';
 import CircleInfo from '../components/icons/CircleInfo';
 import GradeScale from '../components/vehicle/GradeScale';
-import InsuranceSection from '../components/vehicle/InsuranceSection';
+import InsuranceAd from '../components/InsuranceAd';
 import MarketSection from '../components/vehicle/MarketSection';
 import SectionCard from '../components/vehicle/SectionCard';
 import SellBar from '../components/vehicle/SellBar';
@@ -319,7 +319,7 @@ export default function VehicleDetailsScreen({ navigation, route }) {
             />
           </View>
 
-          <InsuranceSection insurance={vehicle.insurance} onQuote={() => {}} />
+          <InsuranceAd ctaLabel="Get a quote in minutes" onGetQuote={() => {}} />
 
           {hasPurchase ? (
             <SectionCard title={vehicle.purchase.title} gap={spacing[5]}>

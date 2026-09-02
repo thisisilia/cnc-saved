@@ -1,17 +1,21 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import AddVehicleFlow from '../components/addVehicle/AddVehicleFlow';
+import AppIcon from '../components/icons/AppIcon';
 import NavHeader from '../components/NavHeader';
 import NotificationSheet from '../components/NotificationSheet';
 import PortfolioCard from '../components/PortfolioCard';
+import PreviouslyOwnedSheet from '../components/PreviouslyOwnedSheet';
 import ShareSheet from '../components/vehicle/ShareSheet';
-import ReminderSummaryCard from '../components/ReminderSummaryCard';
-import VehicleGrid from '../components/VehicleGrid';
+import SortButton from '../components/SortButton';
+import SortSheet from '../components/SortSheet';
+import VehicleListCard from '../components/VehicleListCard';
+import { garageTotals, sortVehicles } from '../data/garage';
 import { portfolio, reminders, summaryReminders } from '../data/garage';
+import { color, font, radius, spacing } from '../theme/tokens';
 import { useAddVehicleDraft } from '../state/addVehicleDraft';
 import { buildVehicleCard } from '../data/addedVehicle';
 import { useGarage } from '../state/garage';
-import { color, spacing } from '../theme/tokens';
 
 export default function MyGarageScreen({ navigation, route }) {
   const [sheet, setSheet] = useState(null);
@@ -20,13 +24,24 @@ export default function MyGarageScreen({ navigation, route }) {
   // The single-state Saved card opens this page scoped to one vehicle — so the
   // reminders and notifications below relate only to that car, not the garage.
   const single = route.params?.single;
-  const vehicles = single ? allVehicles.slice(0, 1) : allVehicles;
+  const baseVehicles = single
+    ? [allVehicles.find((v) => v.id === 'mini') ?? allVehicles[0]]
+    : allVehicles;
+  const [sortBy, setSortBy] = useState('profit');
+  const vehicles = useMemo(() => sortVehicles(baseVehicles, sortBy), [baseVehicles, sortBy]);
   const singleId = vehicles[0]?.id;
   const shownReminders = single ? reminders.filter((r) => r.vehicleId === singleId) : reminders;
   const summaryLines = single ? shownReminders.map((r) => r.summary) : summaryReminders;
   // The count follows the garage, so adding or removing a vehicle is reflected
   // rather than reporting the seed list's length forever.
-  const livePortfolio = { ...portfolio, count: `${vehicles.length} lists` };
+  const totals = garageTotals(vehicles);
+  const livePortfolio = {
+    ...portfolio,
+    count: `${vehicles.length} lists`,
+    totalValue: totals.valueLabel,
+    delta: totals.gainLabel,
+    deltaValue: totals.profitLabel,
+  };
   const close = () => setSheet(null);
 
   return (
@@ -40,12 +55,6 @@ export default function MyGarageScreen({ navigation, route }) {
             icon: 'share-2',
             label: 'Share garage',
             onPress: () => setSheet('share'),
-          },
-          {
-            key: 'history',
-            glyph: 'clock-rotate-left',
-            label: 'Previously owned cars',
-            onPress: () => navigation.navigate('PreviouslyOwned', single ? { single: true } : undefined),
           },
           {
             key: 'add',
@@ -64,13 +73,34 @@ export default function MyGarageScreen({ navigation, route }) {
           portfolio={livePortfolio}
           onPress={() => navigation.navigate('Performance', { portfolio: livePortfolio })}
         />
-        {summaryLines.length > 0 && (
-          <ReminderSummaryCard lines={summaryLines} onSeeAll={() => setSheet('notifications')} />
+        {/* #5: the notification summary ("Insurance renewal…") card is hidden for now. */}
+
+        <View style={styles.listHeader}>
+          <Text style={styles.listTitle}>My vehicles</Text>
+          <SortButton onPress={() => setSheet('sort')} />
+        </View>
+
+        <View style={styles.list}>
+          {vehicles.map((vehicle) => (
+            <VehicleListCard
+              key={vehicle.id}
+              vehicle={vehicle}
+              onPress={() => navigation.navigate('VehicleDetails', { id: vehicle.id })}
+            />
+          ))}
+        </View>
+
+        {!single && (
+          <Pressable
+            style={({ pressed }) => [styles.prevOwned, pressed && styles.prevOwnedPressed]}
+            onPress={() => setSheet('previous')}
+            accessibilityRole="button"
+            accessibilityLabel="Show previously owned car"
+          >
+            <AppIcon name="clock-rotate-left" size={18} color={color.text.neutralBold} />
+            <Text style={styles.prevOwnedLabel}>Show previously owned car</Text>
+          </Pressable>
         )}
-        <VehicleGrid
-          vehicles={vehicles}
-          onSelect={(vehicle) => navigation.navigate('VehicleDetails', { id: vehicle.id })}
-        />
       </ScrollView>
 
       <AddVehicleFlow
@@ -97,6 +127,8 @@ export default function MyGarageScreen({ navigation, route }) {
         name="My garage"
       />
       <NotificationSheet visible={sheet === 'notifications'} onClose={close} reminders={shownReminders} />
+      <PreviouslyOwnedSheet visible={sheet === 'previous'} onClose={close} />
+      <SortSheet visible={sheet === 'sort'} value={sortBy} onSelect={setSortBy} onClose={close} />
     </View>
   );
 }
@@ -110,5 +142,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing[4],
     paddingBottom: spacing[8],
     gap: spacing[4],
+  },
+  listHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  listTitle: {
+    ...font.title3Emphasized,
+    color: color.text.neutralBold,
+  },
+  list: {
+    gap: spacing[6],
+  },
+  prevOwned: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing[2],
+    minHeight: 48,
+    borderRadius: radius.md,
+    backgroundColor: color.background.neutralSubtle,
+  },
+  prevOwnedPressed: {
+    opacity: 0.7,
+  },
+  prevOwnedLabel: {
+    ...font.bodySmEmphasized,
+    color: color.text.neutralBold,
   },
 });

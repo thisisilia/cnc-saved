@@ -80,7 +80,7 @@ export default function PerformanceScreen({ navigation, route }) {
             <AppIcon name="arrow-up-right" size={14} color={color.icon.successBold} />
             <Text style={styles.summaryDeltaStrong}>{portfolio.delta}</Text>
             <Text style={styles.summaryDeltaStrong}>{portfolio.deltaValue}</Text>
-            <Text style={styles.summaryMuted}>{periodLabel(range)}</Text>
+            <Text style={styles.summaryMuted}>since purchased</Text>
           </View>
         </View>
 

@@ -132,9 +132,12 @@ export default function ValuationDetailScreen({ navigation, route }) {
             </View>
           </View>
 
-          <Text style={styles.blurb}>{valuation.blurb}</Text>
-
-          <Button label="Get expert valuation" onPress={() => {}} />
+          <View style={styles.ctaBlock}>
+            <Text style={styles.ownTitle}>Own this car?</Text>
+            <Button label="Add it to My Garage" onPress={ownCar} />
+            <Button label="Get expert valuation" variant="secondary" onPress={() => {}} />
+            <Text style={styles.blurb}>{valuation.blurb}</Text>
+          </View>
         </SectionCard>
 
         <MarketSection market={market} comparables={[]} />
@@ -245,6 +248,13 @@ const styles = StyleSheet.create({
   gradePillLabel: {
     ...font.bodyXsEmphasized,
     color: color.text.inverseBold,
+  },
+  ctaBlock: {
+    gap: spacing[3],
+  },
+  ownTitle: {
+    ...font.bodyEmphasized,
+    color: color.text.neutralBold,
   },
   blurb: {
     ...font.bodyXsRegular,

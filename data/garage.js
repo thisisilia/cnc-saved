@@ -100,6 +100,16 @@ export const reminders = [
     title: 'Service due soon for 2006 Porsche 911 Carrera 4 S Tiptronic S',
     description: 'Your next vehicle service is due soon.',
   },
+  {
+    // Non-urgent — shows on the Toyota's detail page only, not as a list pill.
+    id: 'service-gryaris',
+    vehicleId: 'gryaris',
+    icon: 'gauge-max',
+    summary: 'Service due in 3 months',
+    vehicle: '2000 BMW Z3 Roadster Manual 2.0',
+    title: 'Service due for 2000 BMW Z3 Roadster Manual 2.0',
+    description: 'A routine service is coming up in around 3 months — no action needed yet.',
+  },
 ];
 
 /**
@@ -135,3 +145,52 @@ export const previouslyOwned = [
     image: require('../assets/cars/porsche-911-carrera.jpg'),
   },
 ];
+
+/**
+ * Shared vehicle sort used by the My Garage list (sort sheet) and the saved-page
+ * garage card (default "Profit high to low"). Keeps ordering identical wherever
+ * vehicles are listed.
+ */
+export function sortVehicles(list, sortBy = 'profit') {
+  const num = (s) => Number(String(s ?? '').replace(/[^0-9.]/g, '')) || 0;
+  const year = (s) => {
+    const m = String(s ?? '').match(/(\d{4})/);
+    return m ? Number(m[1]) : 0;
+  };
+  const arr = [...list];
+  switch (sortBy) {
+    case 'value':
+      return arr.sort((a, b) => num(b.price) - num(a.price));
+    case 'alpha':
+      return arr.sort((a, b) => a.name.localeCompare(b.name));
+    case 'purchased':
+      return arr.sort((a, b) => year(b.purchased) - year(a.purchased));
+    case 'added':
+      return arr;
+    case 'profit':
+    default:
+      return arr.sort((a, b) => (b.profitValue || 0) - (a.profitValue || 0));
+  }
+}
+
+/**
+ * Live totals for the garage, from the vehicle list: total value, gain % (profit
+ * over cost) and profit. Used by the My Garage "Overall performance" card and
+ * the saved-page garage card header.
+ */
+export function garageTotals(list) {
+  const num = (s) => Number(String(s ?? '').replace(/[^0-9.]/g, '')) || 0;
+  const totalValue = list.reduce((sum, v) => sum + num(v.price), 0);
+  const totalProfit = list.reduce((sum, v) => sum + (v.profitValue || 0), 0);
+  const cost = totalValue - totalProfit;
+  const gainPercent = cost > 0 ? Math.round((totalProfit / cost) * 100) : 0;
+  const money = (n) => `£${Math.round(n).toLocaleString('en-GB')}`;
+  return {
+    totalValue,
+    totalProfit,
+    gainPercent,
+    valueLabel: money(totalValue),
+    profitLabel: `+ ${money(totalProfit)}`,
+    gainLabel: `${gainPercent}%`,
+  };
+}

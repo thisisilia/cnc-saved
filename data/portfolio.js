@@ -70,13 +70,17 @@ export function formatCurrency(value) {
 }
 
 /**
- * Present the valuation as a range across the condition scale — the lowest
- * grade (Fair) to the highest (Concours), e.g. "£17,700 – £23,200". Grades are
- * ordered low→high; falls back to `value` if none are supplied.
+ * Present the valuation as a range across the condition scale — from the lowest
+ * grade (Fair) up to the vehicle's own condition (the active grade), e.g.
+ * "£17,700 – £22,000". Grades are ordered low→high; falls back to `value` if
+ * none are supplied. If the vehicle's condition is Fair (nothing above to span
+ * to), it shows the single Fair price.
  */
 export function gradeRange(grades, value) {
   if (!grades || grades.length < 2) return value ?? '';
-  return `${grades[0].price} – ${grades[grades.length - 1].price}`;
+  const active = grades.find((grade) => grade.active) ?? grades[grades.length - 1];
+  if (active === grades[0]) return active.price;
+  return `${grades[0].price} – ${active.price}`;
 }
 
 export function formatAxisValue(value) {

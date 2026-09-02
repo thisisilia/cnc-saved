@@ -138,16 +138,7 @@ export default function PhotosVideoScreen({ navigation, route }) {
         )}
       </ScrollView>
 
-      {hasContent && (
-        <View style={[styles.footer, { paddingBottom: insets.bottom || spacing[4] }]}>
-          {/* Saving returns to whoever opened this — the advert flow when it set a
-              returnTo, otherwise straight to the vehicle (not the edit hub). */}
-          <Button
-            label="Save changes"
-            onPress={() => navigation.navigate(route.params?.returnTo ?? 'VehicleDetails', { id })}
-          />
-        </View>
-      )}
+      {/* #VD4: the "Save changes" button is removed from the Photos & video hub. */}
 
       <PhotoTipsSheet visible={info} onClose={() => setInfo(false)} />
     </View>

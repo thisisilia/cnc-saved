@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { color, font, radius, spacing } from '../../theme/tokens';
+import PhotoStack from '../PhotoStack';
 
 export const HERO_HEIGHT = 295;
 
@@ -65,19 +66,17 @@ export default function VehicleHero({ vehicle, width, onAddPhotos }) {
         style={styles.details}
         pointerEvents="none"
       >
-        <Text style={styles.title} numberOfLines={1}>
+        <Text style={styles.title} numberOfLines={2}>
           {vehicle.title}
         </Text>
         <Text style={styles.summary}>{vehicle.summary}</Text>
       </LinearGradient>
 
-      {photos.length > 1 && (
-        <View style={styles.dots} pointerEvents="none">
-          {photos.map((_, i) => (
-            <View key={i} style={[styles.dot, i === index && styles.dotActive]} />
-          ))}
+      {onAddPhotos ? (
+        <View style={styles.stack}>
+          <PhotoStack photos={photos} total={photos.length} onPress={onAddPhotos} />
         </View>
-      )}
+      ) : null}
     </View>
   );
 }
@@ -151,9 +150,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: 79,
-    justifyContent: 'center',
+    minHeight: 79,
+    justifyContent: 'flex-end',
     padding: spacing[4],
+    // Leave room for the PhotoStack (~72px in from the right) plus a 24px gap, so
+    // the title wraps to a second line rather than running under the stack.
+    paddingRight: 72 + spacing[6],
     gap: spacing[1],
   },
   title: {
@@ -166,20 +168,12 @@ const styles = StyleSheet.create({
     ...font.bodyXsRegular,
     color: color.text.inverseBold,
   },
-  dots: {
+  // PhotoStack badge at the hero's bottom-right → opens Photos & video. The fan's
+  // last tile overhangs its layout box by ~32px, so the wrapper sits further in
+  // to keep the +N tile on-screen.
+  stack: {
     position: 'absolute',
-    bottom: 87,
-    alignSelf: 'center',
-    flexDirection: 'row',
-    gap: spacing[1],
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: 'rgba(255,255,255,0.5)',
-  },
-  dotActive: {
-    backgroundColor: '#ffffff',
+    right: spacing[4] + 32,
+    bottom: spacing[4],
   },
 });

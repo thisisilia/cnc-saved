@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { color, font, radius, spacing } from '../../theme/tokens';
-import AppIcon from '../icons/AppIcon';
+import { color, font, spacing } from '../../theme/tokens';
 
 /**
  * Condition scale: a rail with a marker per grade, and the vehicle's own grade
@@ -18,13 +17,7 @@ export default function GradeScale({ grades }) {
         <View style={styles.markers}>
           {grades.map((grade) => (
             <View key={grade.id} style={styles.markerCell}>
-              {grade.active ? (
-                <View style={styles.markerActive}>
-                  <AppIcon name="seal" size={20} color={color.text.inverseBold} />
-                </View>
-              ) : (
-                <View style={styles.marker} />
-              )}
+              <View style={[styles.marker, grade.active && styles.markerActive]} />
             </View>
           ))}
         </View>
@@ -78,12 +71,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: color.background.neutralBold,
   },
+  // #14: the vehicle's grade is the same bullet as the rest, just green-filled
+  // (previously a seal badge).
   markerActive: {
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.full,
     backgroundColor: color.background.brandPrimaryRegular,
   },
   labelRow: {

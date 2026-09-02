@@ -551,14 +551,14 @@ export function getVehicleDetails(id, override) {
   // Added cars have no profile of their own; borrow a default for the sections
   // that need market/history data.
   const profile = added ? PROFILES.mini : PROFILES[owned.id] ?? PROFILES.mini;
-  const hero = added ? added.image : heroes[owned.id] ?? owned.image;
+  const hero = added ? added.image : owned.image ?? heroes[owned.id];
 
   // Added cars borrow the default profile's reminders too, so the notification
   // list and summary aren't blank.
   const vehicleReminders = reminders.filter(
     (reminder) => reminder.vehicleId === (added ? 'mini' : owned.id)
   );
-  const title = added ? added.heroTitle ?? added.name : profile.title ?? owned.name;
+  const title = added ? added.heroTitle ?? added.name : owned.name ?? profile.title;
   const valuationBase =
     added && added.estimate
       ? { ...profile.valuation, value: added.estimate }
@@ -591,7 +591,7 @@ export function getVehicleDetails(id, override) {
 
   // Added cars carry their own specs and start with photos, purchase and history
   // empty; existing cars come fully populated from their profile.
-  const photos = added ? added.photos ?? [] : [hero];
+  const photos = added ? added.photos ?? [] : owned.images ?? [hero];
   const carInfo = added ? added.carInfo ?? profile.carInfo : profile.carInfo;
   const purchase = added ? added.purchase ?? null : profile.purchase;
   // An added car that gave an insurance renewal date shows it on its reminders.
