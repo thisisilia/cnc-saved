@@ -39,7 +39,9 @@ export default function MyGarageScreen({ navigation, route }) {
     ...portfolio,
     count: `${vehicles.length} lists`,
     totalValue: totals.valueLabel,
-    delta: totals.gainLabel,
+    // Single view is scoped to one car, so Overall performance mirrors that
+    // vehicle's own gain rather than the portfolio-wide computed return.
+    delta: single ? vehicles[0]?.delta ?? totals.gainLabel : totals.gainLabel,
     deltaValue: totals.profitLabel,
   };
   const close = () => setSheet(null);

@@ -16,7 +16,7 @@ import { buildVehicleCard, draftFromValuation } from '../data/addedVehicle';
 import { buildEstimate, getValuationDetail } from '../data/valuations';
 import { gradeRange } from '../data/portfolio';
 import { useGarage } from '../state/garage';
-import { color, font, radius, spacing } from '../theme/tokens';
+import { color, font, fontFamily, radius, spacing } from '../theme/tokens';
 
 const COLUMNS = 2;
 
@@ -161,7 +161,6 @@ export default function ValuationDetailScreen({ navigation, route }) {
 
       <BottomSheet visible={menuOpen} onClose={() => setMenuOpen(false)}>
         <View style={styles.menu}>
-          <Button label="I own this car" onPress={ownCar} />
           <Button
             label="Update valuation"
             variant="outline"
@@ -253,7 +252,8 @@ const styles = StyleSheet.create({
     gap: spacing[3],
   },
   ownTitle: {
-    ...font.bodyEmphasized,
+    ...font.bodySmEmphasized,
+    fontFamily: fontFamily.robotoFlex,
     color: color.text.neutralBold,
   },
   blurb: {
