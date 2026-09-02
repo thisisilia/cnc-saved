@@ -119,7 +119,12 @@ export default function GarageCard({
           <View style={styles.chartColumn}>
             <Sparkline width={120} height={25} />
             <View style={styles.chartCaption}>
-              <GainBadge value={totals.gainLabel} profit={totals.profitLabel} />
+              {/* Single view is one car, so mirror its own gain, not the
+                  portfolio-computed return. */}
+              <GainBadge
+                value={vehicle?.delta ?? totals.gainLabel}
+                profit={vehicle?.profit ?? totals.profitLabel}
+              />
             </View>
           </View>
         </View>
