@@ -33,6 +33,7 @@ import VideoDetailScreen from '../screens/VideoDetailScreen';
 import PurchaseInformationScreen from '../screens/PurchaseInformationScreen';
 import ReviewDetailsScreen from '../screens/ReviewDetailsScreen';
 import SavedScreen from '../screens/SavedScreen';
+import ViewMenuScreen from '../screens/ViewMenuScreen';
 import VehicleDetailsScreen from '../screens/VehicleDetailsScreen';
 
 const Stack = createNativeStackNavigator();
@@ -74,7 +75,8 @@ const linking = {
   },
   config: {
     screens: {
-      Saved: '',
+      ViewMenu: '',
+      Saved: 'saved',
       MyGarage: 'my-garage',
       Performance: 'performance',
       PreviouslyOwned: 'previously-owned',
@@ -137,6 +139,7 @@ export default function RootNavigator() {
           detachPreviousScreen: false,
         }}
       >
+        <Stack.Screen name="ViewMenu" component={ViewMenuScreen} />
         <Stack.Screen name="Saved" component={SavedScreen} />
         <Stack.Screen name="MyGarage" component={MyGarageScreen} />
         <Stack.Screen name="Performance" component={PerformanceScreen} />

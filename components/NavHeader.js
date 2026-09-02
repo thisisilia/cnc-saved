@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { color, font, layout, radius, size, spacing } from '../theme/tokens';
+import { STATUS_BAR_H } from './StatusBarMock';
 import AppIcon from './icons/AppIcon';
 import MarqueeText from './MarqueeText';
 
@@ -32,7 +33,7 @@ export default function NavHeader({ title, subtitle, onBack, actions = [] }) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.header, { paddingTop: Math.max(insets.top, layout.headerTop) }]}>
+    <View style={[styles.header, { paddingTop: Math.max(insets.top, STATUS_BAR_H) }]}>
       <View style={styles.leading}>
         <BackButton onPress={onBack} />
         <View style={styles.titleBlock}>

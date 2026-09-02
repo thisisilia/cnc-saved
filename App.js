@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './navigation/RootNavigator';
+import StatusBarMock from './components/StatusBarMock';
 import { UserLenzBridge } from './components/UserLenzBridge';
 import './theme/loadBrandFont';
 import { AddVehicleDraftProvider } from './state/addVehicleDraft';
@@ -93,6 +94,13 @@ export default function App() {
           column on desktop. A no-op on device. */}
       <View style={styles.root}>
         <View nativeID="app-frame" style={styles.frame}>
+          {/* Web-only: on a real device iOS draws its own status bar over the top,
+              so the mock would double up. Dark tint reads on the white screens. */}
+          {isWeb ? (
+            <View style={styles.statusBar} pointerEvents="none">
+              <StatusBarMock tint="#1E1F1E" />
+            </View>
+          ) : null}
           <GarageProvider>
             <SavedListsProvider>
              <VehicleEditsProvider>
@@ -119,6 +127,13 @@ const styles = StyleSheet.create({
         backgroundColor: color.background.pageBackdrop,
       },
     }),
+  },
+  statusBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
   },
   frame: {
     backgroundColor: color.background.neutralWhite,

@@ -15,6 +15,7 @@ import CarInfoSection from '../components/vehicle/CarInfoSection';
 import DetailRow from '../components/vehicle/DetailRow';
 import CircleInfo from '../components/icons/CircleInfo';
 import GradeScale from '../components/vehicle/GradeScale';
+import { STATUS_BAR_H } from '../components/StatusBarMock';
 import InsuranceAd from '../components/InsuranceAd';
 import MarketSection from '../components/vehicle/MarketSection';
 import SectionCard from '../components/vehicle/SectionCard';
@@ -110,7 +111,7 @@ export default function VehicleDetailsScreen({ navigation, route }) {
   // kebab menu.
   const openSection = (section) => navigation.navigate('EditVehicle', { id, section });
 
-  const headerTop = Math.max(insets.top, layout.headerTop);
+  const headerTop = Math.max(insets.top, STATUS_BAR_H);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [valuationOpen, setValuationOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
@@ -300,7 +301,7 @@ export default function VehicleDetailsScreen({ navigation, route }) {
               </View>
               <View style={styles.conditionBlock}>
                 <Text style={styles.conditionTitle}>Vehicle condition</Text>
-                <GradeScale grades={vehicle.valuation.grades} />
+                <GradeScale grades={vehicle.valuation.grades} showPrices={false} />
               </View>
             </View>
             <Text style={styles.blurb}>{vehicle.valuation.blurb}</Text>

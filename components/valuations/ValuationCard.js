@@ -33,9 +33,10 @@ export default function ValuationCard({ entry, onPress }) {
         <Text style={[styles.expires, expired && styles.expired]}>{entry.expires}</Text>
       </View>
 
-      <View style={styles.logo}>
+      <View style={[styles.logo, expired && styles.logoExpired]}>
         {/* Plain logo — no chip disc or shadow here, unlike the listing cards.
-            Resolve by make across all groups; `category` drives the watermark. */}
+            Resolve by make across all groups; `category` drives the watermark.
+            Expired: desaturate (luminosity) so the badge reads as disabled. */}
         <MakeLogo make={entry.make} size={52} />
       </View>
     </Pressable>
@@ -108,5 +109,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: spacing[3],
     right: spacing[4],
+  },
+  logoExpired: {
+    filter: 'grayscale(100%)',
+    opacity: 0.5,
   },
 });

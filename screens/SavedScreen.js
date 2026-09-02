@@ -10,7 +10,9 @@ import GridCard from '../components/GridCard';
 import Coachmark from '../components/onboarding/Coachmark';
 import OnboardingSheet from '../components/onboarding/OnboardingSheet';
 import ResumeSetupStrip from '../components/ResumeSetupStrip';
-import TabBar from '../components/TabBar';
+import SavedEmptyState from '../components/SavedEmptyState';
+import TabBar, { TAB_BAR_HEIGHT } from '../components/TabBar';
+import { STATUS_BAR_H } from '../components/StatusBarMock';
 import ValuationsCard from '../components/ValuationsCard';
 import { garage, listings, searches, valuations } from '../data/saved';
 import { sortVehicles } from '../data/garage';
@@ -22,9 +24,9 @@ import { color, font, layout, radius, size, spacing } from '../theme/tokens';
 
 export default function SavedScreen({ navigation, route }) {
   const insets = useSafeAreaInsets();
-  const [activeTab, setActiveTab] = useState('saved');
-  // Preview switcher for the three Saved-card states.
-  const [viewState, setViewState] = useState('multiple');
+  // Which of the three prototype states to show — chosen on the ViewMenu screen
+  // and passed in as a route param (deep-linkable via /saved?view=…).
+  const viewState = route.params?.view ?? 'multiple';
   // Empty-view condition: once the user adds a car/valuation, that card fills in
   // (renders like the single state) while the others stay empty.
   const [enteredGarage, setEnteredGarage] = useState(false);
@@ -38,14 +40,8 @@ export default function SavedScreen({ navigation, route }) {
   // First-run onboarding carousel + coachmark — shown on the empty garage view.
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [coachmarkOpen, setCoachmarkOpen] = useState(false);
-  useEffect(() => {
-    if (viewState === 'empty') {
-      setOnboardingOpen(true);
-    } else {
-      setOnboardingOpen(false);
-      setCoachmarkOpen(false);
-    }
-  }, [viewState]);
+  // The empty view is now its own "Nothing saved yet!" screen (Figma 1529-13301),
+  // so the onboarding carousel/coachmark no longer auto-opens over it.
   const { vehicles, addVehicle } = useGarage();
 
   // Where a finished valuation lands depends on the ownership answer: a car the
@@ -117,32 +113,19 @@ export default function SavedScreen({ navigation, route }) {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, layout.headerTop) }]}>
-        <View style={styles.viewTabs}>
-          {[
-            { key: 'empty', label: 'Empty' },
-            { key: 'single', label: 'Single' },
-            { key: 'multiple', label: 'Multiple' },
-          ].map((tab) => {
-            const active = tab.key === viewState;
-            return (
-              <Pressable
-                key={tab.key}
-                style={[styles.viewTab, active && styles.viewTabActive]}
-                onPress={() => setViewState(tab.key)}
-                accessibilityRole="button"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={`${tab.label} view`}
-              >
-                <Text style={[styles.viewTabLabel, active && styles.viewTabLabelActive]}>
-                  {tab.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+      <View style={[styles.header, { paddingTop: Math.max(insets.top, STATUS_BAR_H) }]}>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>Saved</Text>
+          <View style={styles.titleRow}>
+            <Pressable
+              onPress={() => navigation.goBack()}
+              accessibilityRole="button"
+              accessibilityLabel="Back to views"
+              hitSlop={8}
+            >
+              <Feather name="chevron-left" size={24} color={color.icon.neutralBold} />
+            </Pressable>
+            <Text style={styles.title}>Saved</Text>
+          </View>
           <Pressable
             style={styles.addButton}
             onPress={() => setAddSheetOpen(true)}
@@ -154,8 +137,15 @@ export default function SavedScreen({ navigation, route }) {
         </View>
       </View>
 
+      {viewState === 'empty' ? (
+        <SavedEmptyState />
+      ) : (
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          // Reserve room so content scrolls clear of the floating glass bar.
+          { paddingBottom: spacing[4] + TAB_BAR_HEIGHT + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.garageAnchor, coachmarkOpen && styles.garageAnchorActive]}>
@@ -239,9 +229,12 @@ export default function SavedScreen({ navigation, route }) {
           onSelect={(v) => navigation.navigate('ValuationDetail', { id: v.id })}
         />
       </ScrollView>
+      )}
 
-      <View style={{ paddingBottom: insets.bottom }}>
-        <TabBar active={activeTab} onChange={setActiveTab} />
+      {/* Floats over the scrolling content so the glass has something to
+          refract — no opaque wrapper between it and the list. */}
+      <View style={[styles.tabBarWrap, { bottom: insets.bottom }]} pointerEvents="box-none">
+        <TabBar active="saved" />
       </View>
 
       <OnboardingSheet
@@ -312,33 +305,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing[2],
+  },
   title: {
     ...font.title1Emphasized,
     color: color.text.neutralBold,
-  },
-  viewTabs: {
-    flexDirection: 'row',
-    alignSelf: 'flex-start',
-    gap: spacing[1],
-    padding: 2,
-    borderRadius: radius.full,
-    backgroundColor: color.background.neutralSubtle,
-  },
-  viewTab: {
-    paddingHorizontal: spacing[2],
-    paddingVertical: spacing[1],
-    borderRadius: radius.full,
-  },
-  viewTabActive: {
-    backgroundColor: color.background.brandPrimaryRegular,
-  },
-  viewTabLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: color.text.neutralRegular,
-  },
-  viewTabLabelActive: {
-    color: color.text.inverseBold,
   },
   addButton: {
     width: size[10],
@@ -350,8 +324,12 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: spacing[4],
-    paddingBottom: spacing[4],
     gap: spacing[4],
+  },
+  tabBarWrap: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
   },
   gridRow: {
     flexDirection: 'row',

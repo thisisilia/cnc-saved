@@ -9,7 +9,7 @@ import { color, font, spacing } from '../../theme/tokens';
  * Shared by the valuation sheet (behind the vehicle detail info icon) and the
  * valuation detail page, which shows it inline.
  */
-export default function GradeScale({ grades }) {
+export default function GradeScale({ grades, showPrices = true }) {
   return (
     <View style={styles.scale}>
       <View style={styles.track}>
@@ -23,13 +23,16 @@ export default function GradeScale({ grades }) {
         </View>
       </View>
 
-      <View style={styles.labelRow}>
-        {grades.map((grade) => (
-          <Text key={grade.id} style={[styles.gradePrice, grade.active && styles.gradeActiveText]}>
-            {grade.price}
-          </Text>
-        ))}
-      </View>
+      {showPrices ? (
+        <View style={styles.labelRow}>
+          {grades.map((grade) => (
+            <Text key={grade.id} style={[styles.gradePrice, grade.active && styles.gradeActiveText]}>
+              {grade.price}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+
       <View style={styles.labelRow}>
         {grades.map((grade) => (
           <Text key={grade.id} style={[styles.gradeLabel, grade.active && styles.gradeActiveText]}>

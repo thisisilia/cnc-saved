@@ -64,14 +64,10 @@ export const color = {
 export const layout = {
   frameWidth: 350,
   /**
-   * Page header padding, per the Figma headers. Every page header should use
-   * these rather than raw values, so new pages stay consistent.
-   *
-   * The device's safe-area inset wins over headerTop when it is larger (notched
-   * phones report ~47-59), so headerTop is effectively the floor — it sets the
-   * spacing on web, where the inset is 0.
+   * Page header bottom padding, per the Figma headers. The header *top* padding
+   * is STATUS_BAR_H (components/StatusBarMock) so headers clear the status bar —
+   * imported directly by each header rather than duplicated here.
    */
-  headerTop: 32,
   headerBottom: 24,
 };
 

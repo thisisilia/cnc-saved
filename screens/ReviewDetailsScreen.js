@@ -14,6 +14,7 @@ import { getVehicleDetails } from '../data/vehicleDetails';
 import { useAddVehicleDraft } from '../state/addVehicleDraft';
 import { useGarage } from '../state/garage';
 import { color, font, layout, radius, spacing } from '../theme/tokens';
+import { STATUS_BAR_H } from '../components/StatusBarMock';
 
 const TITLE_HANDOFF = HERO_HEIGHT - 140;
 
@@ -97,7 +98,7 @@ export default function ReviewDetailsScreen({ navigation }) {
   const carInfoItems = carInfo(vehicle.carInfo, draft ?? {});
   const serviceHistory = history?.entries?.length ? history.entries : vehicle.serviceHistory;
 
-  const headerTop = Math.max(insets.top, layout.headerTop);
+  const headerTop = Math.max(insets.top, STATUS_BAR_H);
 
   const navOpacity = scrollY.interpolate({
     inputRange: [TITLE_HANDOFF, TITLE_HANDOFF + 60],
