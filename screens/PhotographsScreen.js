@@ -13,6 +13,7 @@ import PhotoTipsSheet from '../components/addVehicle/PhotoTipsSheet';
 import PhotoGuidanceList from '../components/addVehicle/PhotoGuidanceList';
 import Button from '../components/vehicle/Button';
 import { PHOTO_GUIDANCE, makePhotos } from '../data/photos';
+import { allVehiclePhotos } from '../data/saved';
 import { usePhotoTarget } from '../state/photoTarget';
 import { color, font, radius, spacing } from '../theme/tokens';
 
@@ -122,6 +123,16 @@ export default function PhotographsScreen({ navigation, route }) {
 
   const empty = items.length === 0;
 
+  // Picker roll: the vehicle's current photos first, then every other car photo,
+  // deduped by image so nothing repeats.
+  const galleryRoll = [];
+  const seen = new Set();
+  for (const entry of [...items, ...allVehiclePhotos]) {
+    if (seen.has(entry.image)) continue;
+    seen.add(entry.image);
+    galleryRoll.push({ id: entry.id, image: entry.image });
+  }
+
   if (camera) {
     return (
       <CameraCapture
@@ -212,9 +223,10 @@ export default function PhotographsScreen({ navigation, route }) {
         visible={gallery}
         onCancel={() => setGallery(false)}
         onDone={addFromGallery}
-        // Show this vehicle's own photos (including any just added) as the roll,
-        // rather than the generic placeholder gallery.
-        images={items.length ? items : undefined}
+        // The roll combines this vehicle's own photos (including any just added)
+        // with every other vehicle's photos, deduped — so there's a full library
+        // to pick from, using all the real car images.
+        images={galleryRoll}
       />
 
       <DeletePhotoSheet

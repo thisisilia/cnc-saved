@@ -108,6 +108,14 @@ export const garage = {
   ],
 };
 
+/** Every photo across all garage vehicles — used as the photo picker's roll. */
+export const allVehiclePhotos = garage.vehicles.flatMap((vehicle, vi) =>
+  (vehicle.images?.length ? vehicle.images : [vehicle.image]).map((image, i) => ({
+    id: `car-${vi}-${i}`,
+    image,
+  }))
+);
+
 export const valuations = {
   title: 'Valuations',
   subtitle: '3 lists',
