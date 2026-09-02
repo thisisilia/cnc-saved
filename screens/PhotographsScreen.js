@@ -208,7 +208,14 @@ export default function PhotographsScreen({ navigation, route }) {
         }}
       />
 
-      <GallerySheet visible={gallery} onCancel={() => setGallery(false)} onDone={addFromGallery} />
+      <GallerySheet
+        visible={gallery}
+        onCancel={() => setGallery(false)}
+        onDone={addFromGallery}
+        // Show this vehicle's own photos (including any just added) as the roll,
+        // rather than the generic placeholder gallery.
+        images={items.length ? items : undefined}
+      />
 
       <DeletePhotoSheet
         visible={deleteId != null}

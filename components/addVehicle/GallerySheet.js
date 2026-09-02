@@ -30,7 +30,7 @@ function SelectionBadge({ order }) {
  * BottomSheet: a Modal portals to the viewport root, which on web would escape
  * the letterboxed phone frame and cover the whole browser window.
  */
-export default function GallerySheet({ visible, onCancel, onDone }) {
+export default function GallerySheet({ visible, onCancel, onDone, images = GALLERY }) {
   const insets = useSafeAreaInsets();
   const [picked, setPicked] = useState([]);
   // Measured: a percentage width cannot account for the pixel gutters, so the
@@ -46,7 +46,7 @@ export default function GallerySheet({ visible, onCancel, onDone }) {
   const toggle = (id) =>
     setPicked((prev) => (prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]));
 
-  const confirm = () => onDone(picked.map((id) => GALLERY.find((g) => g.id === id)));
+  const confirm = () => onDone(picked.map((id) => images.find((g) => g.id === id)));
 
   if (!visible) return null;
 
@@ -82,7 +82,7 @@ export default function GallerySheet({ visible, onCancel, onDone }) {
         showsVerticalScrollIndicator={false}
         onLayout={(e) => setGridWidth(e.nativeEvent.layout.width)}
       >
-        {GALLERY.map((item) => {
+        {images.map((item) => {
           const order = picked.indexOf(item.id) + 1;
           return (
             <Pressable

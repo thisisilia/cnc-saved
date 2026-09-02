@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import NavHeader from '../components/NavHeader';
 import PerformanceChart from '../components/PerformanceChart';
 import ChartRange, { rangeSeries } from '../components/vehicle/ChartRange';
-import AppIcon from '../components/icons/AppIcon';
+import GainBadge from '../components/GainBadge';
 import { HISTORY, PURCHASE_VALUE, formatCurrency } from '../data/portfolio';
 import { portfolio as portfolioSeed } from '../data/garage';
 import { color, font, radius, spacing } from '../theme/tokens';
@@ -77,9 +77,7 @@ export default function PerformanceScreen({ navigation, route }) {
         <View style={styles.summary}>
           <Text style={styles.total}>{portfolio.totalValue}</Text>
           <View style={styles.summaryRow}>
-            <AppIcon name="arrow-up-right" size={14} color={color.icon.successBold} />
-            <Text style={styles.summaryDeltaStrong}>{portfolio.delta}</Text>
-            <Text style={styles.summaryDeltaStrong}>{portfolio.deltaValue}</Text>
+            <GainBadge value={portfolio.delta} profit={portfolio.deltaValue} />
             <Text style={styles.summaryMuted}>since purchased</Text>
           </View>
         </View>
