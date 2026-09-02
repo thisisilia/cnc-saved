@@ -5,6 +5,8 @@ import { SvgXml } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CameraCapture from '../components/addVehicle/CameraCapture';
 import CoverImageSheet from '../components/CoverImageSheet';
+import DeletePhotoSheet from '../components/DeletePhotoSheet';
+import DraggableGrid from '../components/DraggableGrid';
 import GallerySheet from '../components/addVehicle/GallerySheet';
 import MediaSourceSheet from '../components/addVehicle/MediaSourceSheet';
 import PhotoTipsSheet from '../components/addVehicle/PhotoTipsSheet';
@@ -36,6 +38,8 @@ export default function PhotographsScreen({ navigation, route }) {
   const [camera, setCamera] = useState(false);
   const [tipsOpen, setTipsOpen] = useState(false);
   const [coverSheetOpen, setCoverSheetOpen] = useState(false);
+  // The photo pending deletion (its trash was tapped); confirmed in the sheet.
+  const [deleteId, setDeleteId] = useState(null);
 
   const addFromGallery = (chosen) => {
     setGallery(false);
@@ -56,6 +60,57 @@ export default function PhotographsScreen({ navigation, route }) {
   };
 
   const removeItem = (id) => setItems((prev) => prev.filter((p) => p.id !== id));
+
+  // Drag-to-reorder: move the dragged photo to the drop position. The first
+  // photo stays the cover, so reordering can also promote a new cover.
+  const reorder = (fromIndex, toIndex) =>
+    setItems((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+
+  const renderCell = (photo, index) => (
+    <View style={styles.gridCell}>
+      <Image source={photo.image} style={styles.gridImage} resizeMode="cover" />
+      {index === 0 ? (
+        <>
+          <View style={styles.coverTag}>
+            <Text style={styles.coverLabel}>COVER IMAGE</Text>
+          </View>
+          <Pressable
+            style={[styles.cornerBtn, styles.cornerRight]}
+            onPress={() => setCoverSheetOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Edit cover image"
+            hitSlop={8}
+          >
+            <SvgXml xml={EDIT_XML} width={14} height={14} />
+          </Pressable>
+        </>
+      ) : (
+        <>
+          <View
+            style={[styles.cornerBtn, styles.cornerLeft]}
+            accessibilityLabel="Drag to reorder"
+            pointerEvents="none"
+          >
+            <SvgXml xml={MOVE_XML} width={12} height={12} />
+          </View>
+          <Pressable
+            style={[styles.cornerBtn, styles.cornerRight]}
+            onPress={() => setDeleteId(photo.id)}
+            accessibilityRole="button"
+            accessibilityLabel="Delete photo"
+            hitSlop={8}
+          >
+            <SvgXml xml={TRASH_XML} width={14} height={14} />
+          </Pressable>
+        </>
+      )}
+    </View>
+  );
 
   const done = () => {
     setPhotos({ items });
@@ -97,52 +152,13 @@ export default function PhotographsScreen({ navigation, route }) {
       </View>
 
       <ScrollView
-        contentContainerStyle={empty ? styles.content : styles.grid}
+        contentContainerStyle={empty ? styles.content : styles.gridContent}
         showsVerticalScrollIndicator={false}
       >
         {empty ? (
           <PhotoGuidanceList thumbWidth={84} thumbHeight={64} />
         ) : (
-          items.map((photo, index) => (
-            <View key={photo.id} style={styles.gridCell}>
-              <Image source={photo.image} style={styles.gridImage} resizeMode="cover" />
-              {index === 0 ? (
-                <>
-                  <View style={styles.coverTag}>
-                    <Text style={styles.coverLabel}>COVER IMAGE</Text>
-                  </View>
-                  <Pressable
-                    style={[styles.cornerBtn, styles.cornerRight]}
-                    onPress={() => setCoverSheetOpen(true)}
-                    accessibilityRole="button"
-                    accessibilityLabel="Edit cover image"
-                    hitSlop={8}
-                  >
-                    <SvgXml xml={EDIT_XML} width={14} height={14} />
-                  </Pressable>
-                </>
-              ) : (
-                <>
-                  <View
-                    style={[styles.cornerBtn, styles.cornerLeft]}
-                    accessibilityLabel="Drag to reorder"
-                    pointerEvents="none"
-                  >
-                    <SvgXml xml={MOVE_XML} width={12} height={12} />
-                  </View>
-                  <Pressable
-                    style={[styles.cornerBtn, styles.cornerRight]}
-                    onPress={() => removeItem(photo.id)}
-                    accessibilityRole="button"
-                    accessibilityLabel="Delete photo"
-                    hitSlop={8}
-                  >
-                    <SvgXml xml={TRASH_XML} width={14} height={14} />
-                  </Pressable>
-                </>
-              )}
-            </View>
-          ))
+          <DraggableGrid items={items} renderItem={renderCell} onReorder={reorder} />
         )}
       </ScrollView>
 
@@ -193,6 +209,15 @@ export default function PhotographsScreen({ navigation, route }) {
       />
 
       <GallerySheet visible={gallery} onCancel={() => setGallery(false)} onDone={addFromGallery} />
+
+      <DeletePhotoSheet
+        visible={deleteId != null}
+        onDelete={() => {
+          removeItem(deleteId);
+          setDeleteId(null);
+        }}
+        onClose={() => setDeleteId(null)}
+      />
     </View>
   );
 }
@@ -224,11 +249,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[4],
     gap: spacing[4],
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: spacing[4],
+  gridContent: {
     paddingHorizontal: spacing[4],
     paddingBottom: spacing[4],
   },
@@ -241,7 +262,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing[3],
   },
   gridCell: {
-    width: '48%',
+    width: '100%',
     aspectRatio: 172.5 / 120,
     borderRadius: radius.md,
     overflow: 'hidden',

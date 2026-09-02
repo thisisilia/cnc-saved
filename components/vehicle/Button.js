@@ -8,7 +8,7 @@ import { borderWidth, color, font, radius, spacing } from '../../theme/tokens';
  * secondary — filled neutral (Get expert valuation)
  * outline   — white with a 2px brand border (Edit details, Add service record)
  */
-export default function Button({ label, variant = 'primary', onPress, leading, trailing, style, disabled }) {
+export default function Button({ label, variant = 'primary', onPress, leading, trailing, style, labelStyle, disabled }) {
   return (
     <Pressable
       disabled={disabled}
@@ -26,7 +26,7 @@ export default function Button({ label, variant = 'primary', onPress, leading, t
     >
       <View style={styles.content}>
         {leading}
-        <Text style={[styles.label, styles[`${variant}Label`]]} numberOfLines={1}>
+        <Text style={[styles.label, styles[`${variant}Label`], labelStyle]} numberOfLines={1}>
           {label}
         </Text>
         {trailing}
