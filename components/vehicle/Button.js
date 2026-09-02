@@ -8,13 +8,21 @@ import { borderWidth, color, font, radius, spacing } from '../../theme/tokens';
  * secondary — filled neutral (Get expert valuation)
  * outline   — white with a 2px brand border (Edit details, Add service record)
  */
-export default function Button({ label, variant = 'primary', onPress, leading, trailing, style }) {
+export default function Button({ label, variant = 'primary', onPress, leading, trailing, style, disabled }) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.base, styles[variant], pressed && styles.pressed, style]}
+      disabled={disabled}
+      style={({ pressed }) => [
+        styles.base,
+        styles[variant],
+        pressed && !disabled && styles.pressed,
+        disabled && styles.disabled,
+        style,
+      ]}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
+      accessibilityState={{ disabled: !!disabled }}
     >
       <View style={styles.content}>
         {leading}
@@ -43,6 +51,9 @@ const styles = StyleSheet.create({
   },
   pressed: {
     opacity: 0.7,
+  },
+  disabled: {
+    opacity: 0.4,
   },
   primary: {
     backgroundColor: color.background.brandPrimaryRegular,

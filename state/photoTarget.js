@@ -1,4 +1,5 @@
 import { getVehicleDetails } from '../data/vehicleDetails';
+import { formatDuration, getVehicleVideo } from '../data/videos';
 import { useAddVehicleDraft } from './addVehicleDraft';
 import { useVehicleEdits } from './vehicleEdits';
 
@@ -27,10 +28,23 @@ export function usePhotoTarget(id) {
   const edits = getEdits(id) ?? {};
   const sources = edits.photos ?? getVehicleDetails(id).photos ?? [];
 
+  // Owned vehicles ship with a walkaround video (Cloudflare Stream). Seed it so
+  // the Photos & video hub shows its poster thumbnail and the detail page can
+  // play it; edits still override if the user re-records.
+  const stream = getVehicleVideo(id);
+  const seededVideo = stream
+    ? {
+        items: [{ id: 'v-0', image: { uri: stream.poster } }],
+        duration: formatDuration(stream.seconds),
+        embedUrl: stream.embedUrl,
+        videoId: stream.videoId,
+      }
+    : null;
+
   return {
     photos: { items: sources.map((image, i) => ({ id: `p-${i}`, image })) },
     setPhotos: ({ items }) => saveEdits(id, { photos: items.map((it) => it.image) }),
-    video: edits.video ?? null,
+    video: edits.video ?? seededVideo,
     setVideo: (video) => saveEdits(id, { video }),
   };
 }

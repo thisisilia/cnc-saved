@@ -29,6 +29,7 @@ import ValuationEstimateScreen from '../screens/ValuationEstimateScreen';
 import ValuationsScreen from '../screens/ValuationsScreen';
 import PreviouslyOwnedScreen from '../screens/PreviouslyOwnedScreen';
 import WalkaroundVideoScreen from '../screens/WalkaroundVideoScreen';
+import VideoDetailScreen from '../screens/VideoDetailScreen';
 import PurchaseInformationScreen from '../screens/PurchaseInformationScreen';
 import ReviewDetailsScreen from '../screens/ReviewDetailsScreen';
 import SavedScreen from '../screens/SavedScreen';
@@ -93,6 +94,7 @@ const linking = {
       PhotosVideo: 'photos-video',
       Photographs: 'photographs',
       WalkaroundVideo: 'walkaround-video',
+      VideoDetail: 'video/:id',
       ReviewDetails: 'review-details',
       CreateAdvert: 'create-advert',
       Description: 'description',
@@ -155,6 +157,7 @@ export default function RootNavigator() {
         <Stack.Screen name="PhotosVideo" component={PhotosVideoScreen} />
         <Stack.Screen name="Photographs" component={PhotographsScreen} />
         <Stack.Screen name="WalkaroundVideo" component={WalkaroundVideoScreen} />
+        <Stack.Screen name="VideoDetail" component={VideoDetailScreen} />
         <Stack.Screen name="ReviewDetails" component={ReviewDetailsScreen} />
         <Stack.Screen name="CreateAdvert" component={CreateAdvertScreen} />
         <Stack.Screen name="Description" component={DescriptionScreen} />

@@ -93,7 +93,13 @@ export default function PhotosVideoScreen({ navigation, route }) {
   };
 
   const open = (step) => {
-    navigation.navigate(step.id === 'photographs' ? 'Photographs' : 'WalkaroundVideo', { id });
+    if (step.id === 'photographs') {
+      navigation.navigate('Photographs', { id });
+      return;
+    }
+    // A video with a hosted clip opens the player detail page; otherwise the
+    // capture flow to record one.
+    navigation.navigate(video?.embedUrl ? 'VideoDetail' : 'WalkaroundVideo', { id });
   };
 
   // Nothing to save until something has been added, so the button only appears
