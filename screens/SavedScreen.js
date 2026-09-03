@@ -10,7 +10,6 @@ import GridCard from '../components/GridCard';
 import Coachmark from '../components/onboarding/Coachmark';
 import OnboardingSheet from '../components/onboarding/OnboardingSheet';
 import ResumeSetupStrip from '../components/ResumeSetupStrip';
-import SavedEmptyState from '../components/SavedEmptyState';
 import TabBar, { TAB_BAR_HEIGHT } from '../components/TabBar';
 import { STATUS_BAR_H } from '../components/StatusBarMock';
 import { HOME_INDICATOR_H } from '../components/HomeIndicator';
@@ -141,9 +140,6 @@ export default function SavedScreen({ navigation, route }) {
         </View>
       </View>
 
-      {viewState === 'empty' ? (
-        <SavedEmptyState />
-      ) : (
       <ScrollView
         contentContainerStyle={[
           styles.content,
@@ -233,7 +229,6 @@ export default function SavedScreen({ navigation, route }) {
           onSelect={(v) => navigation.navigate('ValuationDetail', { id: v.id })}
         />
       </ScrollView>
-      )}
 
       {/* Floats over the scrolling content so the glass has something to
           refract — no opaque wrapper between it and the list. */}
