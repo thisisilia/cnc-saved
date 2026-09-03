@@ -43,8 +43,15 @@ export default function SavedScreen({ navigation, route }) {
   // First-run onboarding carousel + coachmark — shown on the empty garage view.
   const [onboardingOpen, setOnboardingOpen] = useState(false);
   const [coachmarkOpen, setCoachmarkOpen] = useState(false);
-  // The empty view is now its own "Nothing saved yet!" screen (Figma 1529-13301),
-  // so the onboarding carousel/coachmark no longer auto-opens over it.
+  // First-run onboarding carousel + coachmark auto-open on the empty view.
+  useEffect(() => {
+    if (viewState === 'empty') {
+      setOnboardingOpen(true);
+    } else {
+      setOnboardingOpen(false);
+      setCoachmarkOpen(false);
+    }
+  }, [viewState]);
   const { vehicles, addVehicle } = useGarage();
 
   // Where a finished valuation lands depends on the ownership answer: a car the
@@ -118,17 +125,7 @@ export default function SavedScreen({ navigation, route }) {
     <View style={styles.screen}>
       <View style={[styles.header, { paddingTop: Math.max(insets.top, STATUS_BAR_H) }]}>
         <View style={styles.headerRow}>
-          <View style={styles.titleRow}>
-            <Pressable
-              onPress={() => navigation.goBack()}
-              accessibilityRole="button"
-              accessibilityLabel="Back to views"
-              hitSlop={8}
-            >
-              <Feather name="chevron-left" size={24} color={color.icon.neutralBold} />
-            </Pressable>
-            <Text style={styles.title}>Saved</Text>
-          </View>
+          <Text style={styles.title}>Saved</Text>
           <Pressable
             style={styles.addButton}
             onPress={() => setAddSheetOpen(true)}

@@ -44,3 +44,6 @@ yarn-error.*
 
 # Raw source photos (staging only; app uses assets/cars)
 Image/
+
+# Raw onboarding SVG exports (staging only; app uses rasterized assets/onboarding PNGs)
+New Onboarding/
